@@ -1,0 +1,7 @@
+-- AlterTable
+ALTER TABLE "Exercise" ALTER COLUMN "sets" SET DATA TYPE TEXT,
+ALTER COLUMN "reps" SET DATA TYPE TEXT,
+ALTER COLUMN "restTime" SET DATA TYPE TEXT;
+
+-- AlterTable
+ALTER TABLE "User" ALTER COLUMN "timeZone" SET DEFAULT 'Asia/Calcutta';

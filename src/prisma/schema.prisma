@@ -1,0 +1,363 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  userId            String          @unique @id @default(uuid())
+  email             String           @unique
+  password          String?
+  fullName          String
+  userPreferences   UserPreferences? @relation("UserPreferences")
+  bodyMetrics       BodyMetric[]
+  firstLogin Boolean @default(true)
+  lastNotifiedAt DateTime?
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt()
+  timeZone String @default("Asia/Calcutta")
+  subscription   Subscription?
+  DietAdvice DietAdvice[]
+
+  HydrationAdvice HydrationAdvice[]
+
+  WorkoutAdvice WorkoutAdvice[]
+
+  SleepAdvice SleepAdvice[]
+
+  MotivationAdvice MotivationAdvice[]
+
+  Notifications Notification[]
+
+  ConsumedMeals ConsumedMeal[]
+
+  RecoveryActions RecoveryAction[]
+
+  MealPlan MealPlan[]
+
+  WorkoutLog WorkoutLog[]
+
+  ChatMessage ChatMessage[]
+}
+model Subscription {
+  id        String   @id @default(uuid())
+  endpoint  String @unique
+  auth      String
+  p256dh    String
+  user      User     @relation(fields: [userId], references: [userId])
+  userId    String @unique
+}
+model UserPreferences {
+  id                  String    @id @default(uuid())
+  userId              String    @unique
+  user                User      @relation(fields: [userId], references: [userId], onDelete: Cascade, name: "UserPreferences")
+  gender  String
+  age                 Int
+  height              Float  // In meters for consistency
+  weight              Float  // In KG
+  waistCircumference  Float? 
+  waterIntake Float? // In litres
+  cuisine String?
+  activityLevel       ActivityLevel 
+  preferredWorkoutType WorkoutType @default(strength)  
+  healthGoalFocus     String   
+  dietaryRestrictions String?
+  wakeUpTime         DateTime? // Time user wakes up
+  sleepTime          DateTime? // Time user sleeps
+  sleepQuality       String?  // Good, Average, Poor
+  sleepDuration      Int?     // In hours
+  neckCircumference Float?
+  hip Float?
+  // Optional API-based fields
+  stepsDaily         Int?    
+  heartRate         Int?    
+  caloriesBurned    Float?  
+
+  coachingIntensity CoachingIntensity @default(balanced)
+  motivationStyle   MotivationStyle   @default(supportive)
+
+  notificationFrequency Int?
+
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt()
+}
+
+
+
+model BodyMetric {
+  id                String    @id @default(uuid())
+  userId            String
+  user              User      @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  // Calculated Fields
+  bmi              Float? 
+  bmr              Float? 
+  tdee             Float? 
+
+  bodyFatPercentage Float?
+  muscleMass        Float?    // In kg
+  boneMass          Float?    // In kg
+
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt()
+}
+
+model DietAdvice {
+  id              String      @id @default(uuid())
+  userId          String
+  user            User        @relation(fields: [userId], references: [userId])
+  summary         String
+  calories        Int
+  macronutrients  Json        // { protein: number, carbs: number, fat: number }
+  recommendations String[]
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+}
+
+model MealPlan {
+  id           String      @id @default(uuid())
+  userId      String 
+  user        User        @relation(fields: [userId], references: [userId])
+  date         DateTime
+  meals Meal[]
+  // ConsumedMeal ConsumedMeal[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+   @@unique([userId, date])
+}
+model Meal{
+  id          String    @id @default(uuid())
+  mealPlanId String?
+  mealPlan    MealPlan? @relation(fields: [mealPlanId], references: [id])
+  name        String
+  time        String?
+  description String?
+  type        String // breakfast, lunch, dinner, snack
+  calories    Int
+  protein     Float
+  carbs       Float
+  fat         Float
+  fiber       Float?
+  sugar       Float?
+  sodium      Float?
+  ingredients String[]
+  preparation String?
+  consumed Boolean @default(false)
+  consumedAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  ConsumedMeal ConsumedMeal[]
+}
+model ConsumedMeal {
+  id          String    @id @default(uuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [userId])
+  mealType    String
+  mealId      String? @unique
+  name String?
+  time DateTime
+  description String?
+  calories    Int?
+  protein     Float?
+  carbs       Float?
+  fat         Float?
+  fiber       Float?
+  sugar       Float?
+  sodium      Float?
+  ingredients String[]
+  preparation String?
+  meal        Meal?     @relation(fields: [mealId], references: [id])
+  details     Json?      
+  isFromPlan  Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([userId, createdAt])
+  RecoveryAction RecoveryAction[]
+}
+model WorkoutAdvice {
+  id          String      @id @default(uuid())
+  userId      String
+  user        User        @relation(fields: [userId], references: [userId])
+  summary     String
+  frequency   String
+  type        String
+  active      Boolean     @default(true)
+  workouts    Workout[]   // relation to workouts
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([userId, active])
+}
+model Workout {
+  id               String    @id @default(uuid())
+  workoutAdviceId  String
+  workoutAdvice    WorkoutAdvice @relation(fields: [workoutAdviceId], references: [id])
+  time              String  // Time of the workout
+  name String?
+  description String? 
+  // day              Int       // Day in the plan
+  date             DateTime  // Date of the workout
+  type             String    // cardio, strength, etc.
+  targetMuscles    String[]
+  duration         Int       // Minutes
+  
+  order            Int       // Order in the day
+
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  completions      WorkoutLog[]
+
+  Exercise Exercise[]
+}
+model Exercise {
+  id         String   @id @default(uuid())
+  workoutId  String
+  workout    Workout  @relation(fields: [workoutId], references: [id])
+
+  name       String
+  sets       String?
+  reps       String?
+  restTime   String?    // seconds
+  type       String  // strength, cardio, mobility, etc.
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+model WorkoutLog {
+ id         String   @id @default(uuid())
+  workoutId  String
+  workout    Workout  @relation(fields: [workoutId], references: [id])
+  userId     String
+  user       User     @relation(fields: [userId], references: [userId])
+  completed  Boolean
+  date       DateTime
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([workoutId, userId, date])
+}
+model RecoveryAction {
+  id          String     @id @default(uuid())
+  userId      String
+  user        User       @relation(fields: [userId], references: [userId])
+  sourceType  SourceType // MEAL_DEVIATION or WORKOUT_MISSED
+  deviations Json[] // Array of deviations
+  actions     Json       // Array of recovery actions
+  status      ActionStatus @default(PENDING)
+  completedAt DateTime?
+  consumedMealId String?
+  consumedMeal ConsumedMeal? @relation(fields: [consumedMealId], references: [id])
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@index([userId, status])
+}
+
+model HydrationAdvice {
+  id           String   @id @default(uuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [userId])
+  summary      String
+  current      Json     // { amount: Float, unit: String }
+  target       Json     // { min: Float, optimal: Float, max: Float }
+  progress     Float
+  adjustment   String
+  recommendations Json  // { timing: String[], quality: String[] }
+  createdAt    DateTime @default(now())
+}
+
+model SleepAdvice {
+  id           String   @id @default(uuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [userId])
+  summary      String
+  current      Json     // { duration: Float, quality: Float }
+  target       Json     // { duration: Float, windows: { bedtime: String, wakeup: String } }
+  improvement  Json     // { plan: String[], environment: String[] }
+  recovery     String[]
+  createdAt    DateTime @default(now())
+}
+
+model MotivationAdvice {
+  id           String   @id @default(uuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [userId])
+  summary      String
+  // current      Json     // { adherence: Float, streaks: Int }
+  strategies   Json     // { immediate: String[], longTerm: String[] }
+  boosters     String[]
+  recovery     String[]
+  createdAt    DateTime @default(now())
+}
+
+model Notification {
+  id          String   @id @default(uuid())
+  userId      String
+  title       String
+  message     String
+  type        String   // meal_feedback, workout_reminder, etc.
+  referenceId String?  // ID of related meal/workout
+  actions     Json?    // Suggested actions
+  read        Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [userId])
+  updatedAt   DateTime @updatedAt
+  @@index([userId, read])
+}
+
+model ChatMessage {
+  id         String   @id @default(uuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [userId])
+  role       String   // "user" or "bot"
+  message    String
+  createdAt  DateTime @default(now())
+}
+
+enum ActivityLevel {
+  sedentary
+  lightly_active
+  moderate
+  active
+  very_active
+}
+
+enum CoachingIntensity {
+  gentle
+  balanced
+  intense
+}
+
+enum MotivationStyle {
+  supportive
+  challenging
+  data_driven
+}
+
+
+enum WorkoutType {
+  strength
+  cardio  
+  endurance
+  calisthenics
+  hiit
+  yoga
+  pilates
+}
+
+enum SourceType {
+  MEAL_DEVIATION
+  WORKOUT_MISSED
+}
+
+enum ActionStatus {
+  PENDING
+  COMPLETED
+  SKIPPED
+}
