@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "prestart": "tsc -b",
+    "build": "tsc -b",
     "start": "node dist/app.js"
   },
   "keywords": [],
