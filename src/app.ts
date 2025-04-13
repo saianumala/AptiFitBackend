@@ -19,8 +19,12 @@ app.use(cookieParser());
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.get("/", (req, res) => {
+  res.status(200).send("/welcom to aptifit");
+});
 app.use("/api", apiRouter);
 app.use("/auth", googleAuth);
+console.log("Server is attempting to listen on port:", process.env.PORT);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
