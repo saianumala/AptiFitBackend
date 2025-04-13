@@ -36,7 +36,17 @@ app.get("/", (req: Request, res: Response) => {
 app.use("/api", apiRouter);
 app.use("/auth", googleAuth);
 console.log("Server is attempting to listen on port:", process.env.PORT);
-
+setInterval(() => {
+  const used = process.memoryUsage();
+  console.log(used);
+  console.log(
+    new Date(),
+    `RSS: ${Math.round(used.rss / 1024 / 1024)}MB`,
+    `Heap: ${Math.round(used.heapUsed / 1024 / 1024)}MB/${Math.round(
+      used.heapTotal / 1024 / 1024
+    )}MB`
+  );
+}, 5000);
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
