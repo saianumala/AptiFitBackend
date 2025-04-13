@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "prisma migrate deploy && tsc -b && node dist/app.js",
-    "dev": "prisma migrate dev && tsc -b && node dist/app.js"
+    "start": "prisma migrate deploy  --schema=src/prisma/schema.prisma && tsc -b && node dist/app.js",
+    "dev": "prisma migrate dev  --schema=src/prisma/schema.prisma && tsc -b && node dist/app.js"
   },
   "keywords": [],
   "author": "",
