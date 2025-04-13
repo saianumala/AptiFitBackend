@@ -1,8 +1,7 @@
 import { Request, Response } from "express";
 import prisma from "../prisma";
 import { generateWithAI } from "../utils/personalisedAi";
-// @ts-ignore
-import { Prisma } from "@prisma/client";
+import type { Prisma } from "@prisma/client";
 import fs from "fs/promises";
 import path from "path";
 import { z } from "zod";
@@ -71,37 +70,66 @@ export const generateDailyPlan = async (req: Request, res: Response) => {
     });
 
     // 2. Start transaction
-    const createdPlan = await prisma.$transaction(async (tx) => {
-      // Delete unconsumed meals
-      const existingPlan = await tx.mealPlan.findUnique({
-        where: {
-          userId_date: {
-            userId: req.user?.userId,
-            date: localTime,
+    const createdPlan = await prisma.$transaction(
+      async (tx: Prisma.TransactionClient) => {
+        // Delete unconsumed meals
+        const existingPlan = await tx.mealPlan.findUnique({
+          where: {
+            userId_date: {
+              userId: req.user?.userId,
+              date: localTime,
+            },
           },
-        },
-        include: { meals: true },
-      });
+          include: { meals: true },
+        });
 
-      if (existingPlan) {
-        const unconsumedIds = existingPlan.meals
-          .filter((meal: any) => !meal.consumed)
-          .map((meal: any) => meal.id);
+        if (existingPlan) {
+          const unconsumedIds = existingPlan.meals
+            .filter((meal: any) => !meal.consumed)
+            .map((meal: any) => meal.id);
 
-        if (unconsumedIds.length > 0) {
-          await tx.meal.deleteMany({
-            where: { id: { in: unconsumedIds } },
+          if (unconsumedIds.length > 0) {
+            await tx.meal.deleteMany({
+              where: { id: { in: unconsumedIds } },
+            });
+          }
+          const remaining = existingPlan.meals.filter(
+            (meal: any) => meal.consumed
+          );
+          console.log("remaining", remaining);
+          return await tx.mealPlan.update({
+            where: {
+              id: existingPlan?.id,
+            },
+            data: {
+              meals: {
+                create: plan.meals.map((meal: any) => ({
+                  name: meal.name,
+                  description: meal.description,
+                  type: meal.type,
+                  calories: meal.calories,
+                  protein: meal.protein,
+                  carbs: meal.carbs,
+                  fat: meal.fat,
+                  fiber: meal.fiber,
+                  sugar: meal.sugar,
+                  sodium: meal.sodium,
+                  ingredients: meal.ingredients,
+                  preparation: meal.preparation,
+                  consumed: false,
+                })),
+              },
+            },
+
+            include: { meals: true },
           });
         }
-        const remaining = existingPlan.meals.filter(
-          (meal: any) => meal.consumed
-        );
-        console.log("remaining", remaining);
-        return await tx.mealPlan.update({
-          where: {
-            id: existingPlan?.id,
-          },
+
+        // Create new meal plan
+        return await tx.mealPlan.create({
           data: {
+            userId: req.user?.userId,
+            date: localTime,
             meals: {
               create: plan.meals.map((meal: any) => ({
                 name: meal.name,
@@ -120,37 +148,10 @@ export const generateDailyPlan = async (req: Request, res: Response) => {
               })),
             },
           },
-
           include: { meals: true },
         });
       }
-
-      // Create new meal plan
-      return await tx.mealPlan.create({
-        data: {
-          userId: req.user?.userId,
-          date: localTime,
-          meals: {
-            create: plan.meals.map((meal: any) => ({
-              name: meal.name,
-              description: meal.description,
-              type: meal.type,
-              calories: meal.calories,
-              protein: meal.protein,
-              carbs: meal.carbs,
-              fat: meal.fat,
-              fiber: meal.fiber,
-              sugar: meal.sugar,
-              sodium: meal.sodium,
-              ingredients: meal.ingredients,
-              preparation: meal.preparation,
-              consumed: false,
-            })),
-          },
-        },
-        include: { meals: true },
-      });
-    });
+    );
 
     // 3. Notification logic after DB operations
     const user = await prisma.user.findFirst({

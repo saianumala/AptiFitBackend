@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { prisma } from "../prisma";
 import { Prisma } from "@prisma/client";
-import { generateWithAI } from "../utils/personalisedAi";
 
 export const getPendingRecoveryActions = async (
   req: Request,
@@ -29,7 +28,7 @@ export const getPendingRecoveryActions = async (
     });
 
     res.status(200).json(actions);
-  } catch (error) {
+  } catch (error: any) {
     console.error("Failed to get recovery actions:", error);
     res.status(500).json({
       error: "Failed to get recovery actions",

@@ -27,10 +27,11 @@ router.post(
     const userId = req.user?.userId;
     try {
       await prisma.subscription.upsert({
-        where: { endpoint: subscription.endpoint },
+        where: { userId },
         update: {
           auth: subscription.keys.auth,
           p256dh: subscription.keys.p256dh,
+          endpoint: subscription.endpoint,
         },
         create: {
           userId,

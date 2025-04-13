@@ -1,9 +1,7 @@
-import webpush from "web-push";
 import prisma from "../prisma";
 import { sendNotifications } from "./sendNotification";
 import { isTimeToNotify } from "../utils/timeUtils";
 import { personalisedAi } from "../utils/personalisedAi";
-import { tree } from "next/dist/build/templates/app-page";
 
 export async function sendFrequencyNotifications() {
   const users = await prisma.user.findMany({
