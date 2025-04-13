@@ -290,7 +290,11 @@ function logout(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         res
             .status(200)
-            .clearCookie("accessToken")
+            .clearCookie("accessToken", {
+            httpOnly: true,
+            secure: true,
+            sameSite: "none",
+        })
             .json({ message: "loggedOut successfully" });
     });
 }
