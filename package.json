@@ -4,8 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "rm -rf dist &&  prisma migrate deploy --schema=src/prisma/schema.prisma && NODE_OPTIONS='--max-old-space-size=1250' tsc -b && node dist/app.js",
-    "dev": "NODE_OPTIONS='--max-old-space-size=2048' prisma migrate dev --schema=src/prisma/schema.prisma && NODE_OPTIONS='--max-old-space-size=2048' tsc -b && NODE_OPTIONS='--max-old-space-size=2048' node dist/app.js"
+    "generate": "npx prisma generate --schema=src/prisma/schema.prisma",
+    "build": "rm -rf dist && NODE_OPTIONS='--max-old-space-size=1250' tsc -b",
+    "migrate": "npx prisma migrate deploy --schema=src/prisma/schema.prisma",
+    "start": "npm run generate && npm run migrate && node dist/app.js",
+    "dev": "npm run generate && NODE_OPTIONS='--max-old-space-size=2048' prisma migrate dev --schema=src/prisma/schema.prisma && NODE_OPTIONS='--max-old-space-size=2048' tsc -b && NODE_OPTIONS='--max-old-space-size=2048' node dist/app.js"
   },
   "keywords": [],
   "author": "",
