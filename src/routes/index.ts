@@ -7,7 +7,7 @@ import notificationRouter from "./notificationRoute";
 import geminiChatbotRouter from "./geminiChatBotRouter";
 import { userAuthorization } from "../middleware/userAuth";
 import prisma from "../prisma";
-import { sendNotifications } from "../notifications/sendNotification";
+// import { sendNotifications } from "../notifications/sendNotification";
 
 // import healthDataRouter from "./healthDataRoute";
 

@@ -3,7 +3,7 @@ import prisma from "../prisma";
 import { generateWithAI } from "../utils/personalisedAi";
 import { Prisma } from "@prisma/client";
 import { sendNotification } from "web-push";
-import { sendNotifications } from "../notifications/sendNotification";
+// import { sendNotifications } from "../notifications/sendNotification";
 import { getUserLocalDate } from "../utils/getLocalTime";
 import { DateTime } from "luxon";
 
@@ -173,10 +173,10 @@ export const generateDailyPlan = async (req: Request, res: Response) => {
       },
     });
 
-    await sendNotifications({
-      subscription: user?.subscription,
-      payload: { ...notification, title: "New Meal Plan Generated" },
-    });
+    // await sendNotifications({
+    //   subscription: user?.subscription,
+    //   payload: { ...notification, title: "New Meal Plan Generated" },
+    // });
 
     res.status(201).json({ newMealPlan: createdPlan });
   } catch (error) {
@@ -286,10 +286,10 @@ export const trackMealConsumption = async (req: Request, res: Response) => {
         isFromPlan: true,
       },
     });
-    await sendNotifications({
-      subscription: updatedMeal.mealPlan?.user.subscription,
-      payload: { title: "Consumed Meal as per Plan" },
-    });
+    // await sendNotifications({
+    //   subscription: updatedMeal.mealPlan?.user.subscription,
+    //   payload: { title: "Consumed Meal as per Plan" },
+    // });
     res.status(200).json({
       updatedMeals: updatedMeal.mealPlan?.meals,
       date: updatedMeal.mealPlan?.date,
@@ -390,10 +390,10 @@ export const trackAdHocMeal = async (req: Request, res: Response) => {
           createdAt: new Date().toISOString(),
         },
       });
-      await sendNotifications({
-        subscription: user?.subscription,
-        payload: { title: notification.title, body: notification.message },
-      });
+      // await sendNotifications({
+      //   subscription: user?.subscription,
+      //   payload: { title: notification.title, body: notification.message },
+      // });
     }
 
     res

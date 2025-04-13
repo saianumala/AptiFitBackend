@@ -83,17 +83,3 @@ Current Time: ${DateTime.now().setZone(userData.timeZone)}
 
     `;
 }
-generateUserContext({
-  userData: {
-    userId: "6b4094a0-15dc-4957-8c37-c542272b9585",
-    email: "asfasf",
-    timeZone: "Asia/Calcutta",
-  },
-});
-// Recent Meals:
-// ${user?.MealPlan.map(
-//   (meals) => `- ${m.type} at ${m.time}: ${m.name}`
-// ).join("\n")}
-
-// Workout Plan:
-// ${workouts.map((w) => `- ${w.type} at ${w.time}`).join("\n")}
