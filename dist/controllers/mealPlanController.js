@@ -18,6 +18,7 @@ const personalisedAi_1 = require("../utils/personalisedAi");
 // import { sendNotifications } from "../notifications/sendNotification";
 const getLocalTime_1 = require("../utils/getLocalTime");
 const luxon_1 = require("luxon");
+const sendNotification_1 = require("../notifications/sendNotification");
 // export const mealDataSchema = z.object({
 //   name: z.string().min(1, "Meal name is required"),
 //   description: z.string().optional(),
@@ -66,12 +67,12 @@ const generateDailyPlan = (req, res) => __awaiter(void 0, void 0, void 0, functi
         });
         // 2. Start transaction
         const createdPlan = yield prisma_1.default.$transaction((tx) => __awaiter(void 0, void 0, void 0, function* () {
-            var _a, _b;
+            var _e, _f;
             // Delete unconsumed meals
             const existingPlan = yield tx.mealPlan.findUnique({
                 where: {
                     userId_date: {
-                        userId: (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId,
+                        userId: (_e = req.user) === null || _e === void 0 ? void 0 : _e.userId,
                         date: localTime,
                     },
                 },
@@ -117,7 +118,7 @@ const generateDailyPlan = (req, res) => __awaiter(void 0, void 0, void 0, functi
             // Create new meal plan
             return yield tx.mealPlan.create({
                 data: {
-                    userId: (_b = req.user) === null || _b === void 0 ? void 0 : _b.userId,
+                    userId: (_f = req.user) === null || _f === void 0 ? void 0 : _f.userId,
                     date: localTime,
                     meals: {
                         create: plan.meals.map((meal) => ({
@@ -161,10 +162,10 @@ const generateDailyPlan = (req, res) => __awaiter(void 0, void 0, void 0, functi
                 referenceId: createdPlan.id,
             },
         });
-        // await sendNotifications({
-        //   subscription: user?.subscription,
-        //   payload: { ...notification, title: "New Meal Plan Generated" },
-        // });
+        yield (0, sendNotification_1.sendNotifications)({
+            subscription: user === null || user === void 0 ? void 0 : user.subscription,
+            payload: Object.assign(Object.assign({}, notification), { title: "New Meal Plan Generated" }),
+        });
         res.status(201).json({ newMealPlan: createdPlan });
     }
     catch (error) {
@@ -174,16 +175,16 @@ const generateDailyPlan = (req, res) => __awaiter(void 0, void 0, void 0, functi
 });
 exports.generateDailyPlan = generateDailyPlan;
 const getCurrentPlan = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
+    var _g, _h;
     try {
         const { timeZone } = req.body;
         const localTime = (0, getLocalTime_1.getUserLocalDate)({
             timezone: timeZone,
-            usersDefaultZone: (_a = req.user) === null || _a === void 0 ? void 0 : _a.timeZone,
+            usersDefaultZone: (_g = req.user) === null || _g === void 0 ? void 0 : _g.timeZone,
         });
         const plan = yield prisma_1.default.mealPlan.findFirst({
             where: {
-                userId: (_b = req.user) === null || _b === void 0 ? void 0 : _b.userId,
+                userId: (_h = req.user) === null || _h === void 0 ? void 0 : _h.userId,
                 date: localTime,
             },
             include: {
@@ -219,13 +220,13 @@ exports.getCurrentPlan = getCurrentPlan;
 //   }
 // };
 const trackMealConsumption = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d;
+    var _j, _k, _l, _m, _o;
     try {
         console.log("reached track meal");
         console.log(req.body);
         const { mealId } = req.body;
         const { timeZone } = req.body;
-        const zone = timeZone || ((_a = req.user) === null || _a === void 0 ? void 0 : _a.timeZone) || "UTC";
+        const zone = timeZone || ((_j = req.user) === null || _j === void 0 ? void 0 : _j.timeZone) || "UTC";
         const usersLocalTIme = luxon_1.DateTime.now().setZone(zone).toISO();
         console.log(mealId);
         console.log(usersLocalTIme);
@@ -254,7 +255,7 @@ const trackMealConsumption = (req, res) => __awaiter(void 0, void 0, void 0, fun
         // Create consumed meal record
         const consumedMeal = yield prisma_1.default.consumedMeal.create({
             data: {
-                userId: (_b = req.user) === null || _b === void 0 ? void 0 : _b.userId,
+                userId: (_k = req.user) === null || _k === void 0 ? void 0 : _k.userId,
                 mealId: updatedMeal.id,
                 mealType: updatedMeal.type,
                 name: updatedMeal.name,
@@ -272,13 +273,13 @@ const trackMealConsumption = (req, res) => __awaiter(void 0, void 0, void 0, fun
                 isFromPlan: true,
             },
         });
-        // await sendNotifications({
-        //   subscription: updatedMeal.mealPlan?.user.subscription,
-        //   payload: { title: "Consumed Meal as per Plan" },
-        // });
+        yield (0, sendNotification_1.sendNotifications)({
+            subscription: (_l = updatedMeal.mealPlan) === null || _l === void 0 ? void 0 : _l.user.subscription,
+            payload: { title: "Consumed Meal as per Plan" },
+        });
         res.status(200).json({
-            updatedMeals: (_c = updatedMeal.mealPlan) === null || _c === void 0 ? void 0 : _c.meals,
-            date: (_d = updatedMeal.mealPlan) === null || _d === void 0 ? void 0 : _d.date,
+            updatedMeals: (_m = updatedMeal.mealPlan) === null || _m === void 0 ? void 0 : _m.meals,
+            date: (_o = updatedMeal.mealPlan) === null || _o === void 0 ? void 0 : _o.date,
             consumedMeal,
         });
     }
@@ -288,19 +289,19 @@ const trackMealConsumption = (req, res) => __awaiter(void 0, void 0, void 0, fun
 });
 exports.trackMealConsumption = trackMealConsumption;
 const trackAdHocMeal = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d, _e, _f, _g;
+    var _p, _q, _r, _s, _t, _u, _v;
     try {
         const { mealData } = req.body;
         console.log("mealdata is", mealData);
         console.log(typeof mealData);
         const { timeZone } = req.body;
-        const zone = timeZone || ((_a = req.user) === null || _a === void 0 ? void 0 : _a.timeZone) || "UTC";
+        const zone = timeZone || ((_p = req.user) === null || _p === void 0 ? void 0 : _p.timeZone) || "UTC";
         const usersLocalTIme = luxon_1.DateTime.now().setZone(zone).toISO();
-        const imagePath = ((_b = req.file) === null || _b === void 0 ? void 0 : _b.path) || undefined;
+        const imagePath = ((_q = req.file) === null || _q === void 0 ? void 0 : _q.path) || undefined;
         console.log("1");
         const jsonMEalData = JSON.parse(mealData);
         const user = yield prisma_1.default.user.findUnique({
-            where: { userId: (_c = req.user) === null || _c === void 0 ? void 0 : _c.userId },
+            where: { userId: (_r = req.user) === null || _r === void 0 ? void 0 : _r.userId },
             select: {
                 userPreferences: true,
                 bodyMetrics: { orderBy: { createdAt: "desc" }, take: 1 },
@@ -324,7 +325,7 @@ const trackAdHocMeal = (req, res) => __awaiter(void 0, void 0, void 0, function*
         console.log("2");
         // Check for nutritional deviations
         const data = yield (0, personalisedAi_1.generateWithAI)({
-            userId: (_d = req.user) === null || _d === void 0 ? void 0 : _d.userId,
+            userId: (_s = req.user) === null || _s === void 0 ? void 0 : _s.userId,
             taskType: "meal-deviation",
             mealData: jsonMEalData,
             updatedUser: user,
@@ -333,7 +334,7 @@ const trackAdHocMeal = (req, res) => __awaiter(void 0, void 0, void 0, function*
         console.log("data", data);
         const consumedMeal = yield prisma_1.default.consumedMeal.create({
             data: {
-                userId: (_e = req.user) === null || _e === void 0 ? void 0 : _e.userId,
+                userId: (_t = req.user) === null || _t === void 0 ? void 0 : _t.userId,
                 time: new Date().toISOString(),
                 mealType: jsonMEalData.mealType,
                 name: jsonMEalData.name,
@@ -355,7 +356,7 @@ const trackAdHocMeal = (req, res) => __awaiter(void 0, void 0, void 0, function*
         if (data.isSignificant) {
             recoveryAction = yield prisma_1.default.recoveryAction.create({
                 data: {
-                    userId: (_f = req.user) === null || _f === void 0 ? void 0 : _f.userId,
+                    userId: (_u = req.user) === null || _u === void 0 ? void 0 : _u.userId,
                     sourceType: "MEAL_DEVIATION",
                     deviations: data.deviations,
                     consumedMealId: consumedMeal.id,
@@ -366,7 +367,7 @@ const trackAdHocMeal = (req, res) => __awaiter(void 0, void 0, void 0, function*
             });
             const notification = yield prisma_1.default.notification.create({
                 data: {
-                    userId: (_g = req.user) === null || _g === void 0 ? void 0 : _g.userId,
+                    userId: (_v = req.user) === null || _v === void 0 ? void 0 : _v.userId,
                     title: "Nutrition Alert",
                     message: data.notificationMessage,
                     type: "nutrition_alert",
@@ -374,10 +375,10 @@ const trackAdHocMeal = (req, res) => __awaiter(void 0, void 0, void 0, function*
                     createdAt: new Date().toISOString(),
                 },
             });
-            // await sendNotifications({
-            //   subscription: user?.subscription,
-            //   payload: { title: notification.title, body: notification.message },
-            // });
+            yield (0, sendNotification_1.sendNotifications)({
+                subscription: user === null || user === void 0 ? void 0 : user.subscription,
+                payload: { title: notification.title, body: notification.message },
+            });
         }
         res
             .status(201)
@@ -389,7 +390,7 @@ const trackAdHocMeal = (req, res) => __awaiter(void 0, void 0, void 0, function*
 });
 exports.trackAdHocMeal = trackAdHocMeal;
 const getNutritionSummary = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+    var _w;
     try {
         const { date } = req.query;
         const startDate = new Date(date);
@@ -399,7 +400,7 @@ const getNutritionSummary = (req, res) => __awaiter(void 0, void 0, void 0, func
         // Get all consumed meals for the day (both from plan and ad-hoc)
         const consumedMeals = yield prisma_1.default.consumedMeal.findMany({
             where: {
-                userId: (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId,
+                userId: (_w = req.user) === null || _w === void 0 ? void 0 : _w.userId,
                 createdAt: {
                     gte: startDate,
                     lte: endDate,

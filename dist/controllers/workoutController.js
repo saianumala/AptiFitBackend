@@ -36,7 +36,7 @@ const generateWorkoutPlan = (req, res) => __awaiter(void 0, void 0, void 0, func
                 ? user.bodyMetrics[0]
                 : user.bodyMetrics,
         }).then((workoutAdvice) => __awaiter(void 0, void 0, void 0, function* () {
-            var _a;
+            var _b;
             return (generatedWorkout = yield prisma_1.prisma.workoutAdvice.create({
                 data: {
                     userId,
@@ -44,7 +44,7 @@ const generateWorkoutPlan = (req, res) => __awaiter(void 0, void 0, void 0, func
                     frequency: workoutAdvice.frequency,
                     type: workoutAdvice.type,
                     workouts: {
-                        create: ((_a = workoutAdvice.workouts) === null || _a === void 0 ? void 0 : _a.map((w) => ({
+                        create: ((_b = workoutAdvice.workouts) === null || _b === void 0 ? void 0 : _b.map((w) => ({
                             date: new Date(),
                             time: w.time,
                             type: w.type,
@@ -74,9 +74,9 @@ const generateWorkoutPlan = (req, res) => __awaiter(void 0, void 0, void 0, func
 });
 exports.generateWorkoutPlan = generateWorkoutPlan;
 const getTodaysWorkout = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+    var _c;
     try {
-        const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId;
+        const userId = (_c = req.user) === null || _c === void 0 ? void 0 : _c.userId;
         const workoutAdvice = yield prisma_1.prisma.workoutAdvice.findFirst({
             where: {
                 userId,
@@ -111,10 +111,10 @@ const getTodaysWorkout = (req, res) => __awaiter(void 0, void 0, void 0, functio
 });
 exports.getTodaysWorkout = getTodaysWorkout;
 const logWorkoutCompletion = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+    var _d;
     try {
         const { workoutId, completed } = req.body;
-        const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId;
+        const userId = (_d = req.user) === null || _d === void 0 ? void 0 : _d.userId;
         // Verify workout exists
         const workout = yield prisma_1.prisma.workout.findUnique({
             where: { id: workoutId },
@@ -172,10 +172,10 @@ const logWorkoutCompletion = (req, res) => __awaiter(void 0, void 0, void 0, fun
 });
 exports.logWorkoutCompletion = logWorkoutCompletion;
 const getWorkoutHistory = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+    var _e;
     try {
         const { days = 30 } = req.query;
-        const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId;
+        const userId = (_e = req.user) === null || _e === void 0 ? void 0 : _e.userId;
         const dateThreshold = new Date();
         dateThreshold.setDate(dateThreshold.getDate() - Number(days));
         const history = yield prisma_1.prisma.workoutLog.findMany({
@@ -203,9 +203,9 @@ const getWorkoutHistory = (req, res) => __awaiter(void 0, void 0, void 0, functi
 });
 exports.getWorkoutHistory = getWorkoutHistory;
 const getWorkoutRecovery = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+    var _f;
     try {
-        const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId;
+        const userId = (_f = req.user) === null || _f === void 0 ? void 0 : _f.userId;
         const recoveryActions = yield prisma_1.prisma.recoveryAction.findMany({
             where: {
                 userId,

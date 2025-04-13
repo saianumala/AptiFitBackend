@@ -61,7 +61,8 @@ router.get("/google/callback", async (req, res) => {
     res
       .cookie("accessToken", token, {
         httpOnly: true,
-        sameSite: "lax",
+        sameSite: "none",
+        secure: true,
         maxAge: 24 * 60 * 60 * 1000,
       })
       .redirect(process.env.CORS_ORIGIN!);

@@ -45,11 +45,11 @@ const getPendingRecoveryActions = (req, res) => __awaiter(void 0, void 0, void 0
 });
 exports.getPendingRecoveryActions = getPendingRecoveryActions;
 const updateRecoveryActionStatus = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+    var _b;
     try {
         const { id } = req.params;
         const { status } = req.body;
-        const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId;
+        const userId = (_b = req.user) === null || _b === void 0 ? void 0 : _b.userId;
         // Validate status against enum
         if (!Object.values(ActionStatus).includes(status)) {
             res.status(400).json({ error: "Invalid status value" });
@@ -104,9 +104,9 @@ const updateRecoveryActionStatus = (req, res) => __awaiter(void 0, void 0, void 
 });
 exports.updateRecoveryActionStatus = updateRecoveryActionStatus;
 const getRecoveryPlans = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+    var _c;
     try {
-        const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId;
+        const userId = (_c = req.user) === null || _c === void 0 ? void 0 : _c.userId;
         const { limit = 5 } = req.query;
         // In your schema, RecoveryAction serves as the recovery plan
         const plans = yield prisma_1.prisma.recoveryAction.findMany({

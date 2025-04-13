@@ -62,8 +62,8 @@ const createChatMessage = (req, res) => __awaiter(void 0, void 0, void 0, functi
 });
 exports.createChatMessage = createChatMessage;
 const getChatMessages = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
-    const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId;
+    var _b;
+    const userId = (_b = req.user) === null || _b === void 0 ? void 0 : _b.userId;
     try {
         console.log(userId);
         const messages = yield prisma_1.default.chatMessage.findMany({
@@ -83,9 +83,9 @@ const getChatMessages = (req, res) => __awaiter(void 0, void 0, void 0, function
 });
 exports.getChatMessages = getChatMessages;
 const getChatMessageById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+    var _c;
     const { id } = req.params;
-    const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId;
+    const userId = (_c = req.user) === null || _c === void 0 ? void 0 : _c.userId;
     try {
         const message = yield prisma_1.default.chatMessage.findFirst({
             where: { id, userId },
@@ -102,10 +102,10 @@ const getChatMessageById = (req, res) => __awaiter(void 0, void 0, void 0, funct
 });
 exports.getChatMessageById = getChatMessageById;
 const updateChatMessage = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+    var _d;
     const { id } = req.params;
     const { message } = req.body;
-    const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId;
+    const userId = (_d = req.user) === null || _d === void 0 ? void 0 : _d.userId;
     try {
         const updated = yield prisma_1.default.chatMessage.updateMany({
             where: { id, userId },
@@ -123,9 +123,9 @@ const updateChatMessage = (req, res) => __awaiter(void 0, void 0, void 0, functi
 });
 exports.updateChatMessage = updateChatMessage;
 const deleteChatMessage = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+    var _e;
     const { id } = req.params;
-    const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId;
+    const userId = (_e = req.user) === null || _e === void 0 ? void 0 : _e.userId;
     try {
         const deleted = yield prisma_1.default.chatMessage.deleteMany({
             where: { id, userId },

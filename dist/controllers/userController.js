@@ -12,14 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateUserSchema = void 0;
-exports.loginCheck = loginCheck;
-exports.createUser = createUser;
-exports.updateUser = updateUser;
-exports.deleteUser = deleteUser;
-exports.getUser = getUser;
-exports.login = login;
-exports.logout = logout;
+exports.logout = exports.login = exports.getUser = exports.deleteUser = exports.updateUser = exports.createUser = exports.loginCheck = exports.updateUserSchema = void 0;
 const zod_1 = require("zod");
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const prisma_1 = __importDefault(require("../prisma"));
@@ -78,6 +71,7 @@ function loginCheck(req, res) {
         }
     });
 }
+exports.loginCheck = loginCheck;
 // signup user
 function createUser(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -126,6 +120,7 @@ function createUser(req, res) {
         }
     });
 }
+exports.createUser = createUser;
 function updateUser(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -163,6 +158,7 @@ function updateUser(req, res) {
         }
     });
 }
+exports.updateUser = updateUser;
 function deleteUser(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -193,6 +189,7 @@ function deleteUser(req, res) {
         }
     });
 }
+exports.deleteUser = deleteUser;
 function getUser(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -232,6 +229,7 @@ function getUser(req, res) {
         }
     });
 }
+exports.getUser = getUser;
 function login(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const { email, password } = req.body;
@@ -260,9 +258,10 @@ function login(req, res) {
             res
                 .status(200)
                 .cookie("accessToken", token, {
-                sameSite: "lax",
+                sameSite: "none",
                 httpOnly: true,
-                maxAge: 60 * 60 * 1000,
+                secure: true,
+                maxAge: 24 * 60 * 60 * 1000,
             })
                 .json({
                 message: "you are logged in",
@@ -286,6 +285,7 @@ function login(req, res) {
         }
     });
 }
+exports.login = login;
 function logout(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         res
@@ -294,3 +294,4 @@ function logout(req, res) {
             .json({ message: "loggedOut successfully" });
     });
 }
+exports.logout = logout;

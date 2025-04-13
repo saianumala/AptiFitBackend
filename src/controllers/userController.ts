@@ -245,7 +245,7 @@ export async function login(req: Request, res: Response) {
         sameSite: "none",
         httpOnly: true,
         secure: true,
-        maxAge: 60 * 60 * 1000,
+        maxAge: 24 * 60 * 60 * 1000,
       })
       .json({
         message: "you are logged in",

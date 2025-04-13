@@ -12,11 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updatePreferencesSchema = exports.preferencesSchema = void 0;
-exports.createPreferences = createPreferences;
-exports.updatePreferences = updatePreferences;
-exports.deletePreferences = deletePreferences;
-exports.getPreferences = getPreferences;
+exports.getPreferences = exports.deletePreferences = exports.updatePreferences = exports.createPreferences = exports.updatePreferencesSchema = exports.preferencesSchema = void 0;
 const prisma_1 = __importDefault(require("../prisma"));
 const zod_1 = require("zod");
 const personalisedAi_1 = require("../utils/personalisedAi");
@@ -442,6 +438,7 @@ function createPreferences(req, res) {
         }
     });
 }
+exports.createPreferences = createPreferences;
 function updatePreferences(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         var _a, _b;
@@ -516,12 +513,12 @@ function updatePreferences(req, res) {
                     userPreferences: updatedPreferences,
                     bodyMetrics: updatedBodyMetrics,
                 }).then((mealPlan) => __awaiter(this, void 0, void 0, function* () {
-                    var _a;
+                    var _c;
                     // Check for today's meal plan
                     let todayPlan = yield prisma_1.default.mealPlan.findUnique({
                         where: {
                             userId_date: {
-                                userId: (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId,
+                                userId: (_c = req.user) === null || _c === void 0 ? void 0 : _c.userId,
                                 date: localTime,
                             },
                         },
@@ -665,6 +662,7 @@ function updatePreferences(req, res) {
         }
     });
 }
+exports.updatePreferences = updatePreferences;
 function deletePreferences(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         var _a;
@@ -682,6 +680,7 @@ function deletePreferences(req, res) {
         }
     });
 }
+exports.deletePreferences = deletePreferences;
 function getPreferences(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         var _a;
@@ -712,6 +711,7 @@ function getPreferences(req, res) {
         }
     });
 }
+exports.getPreferences = getPreferences;
 // export const getRecommendationSettings = async (
 //   req: Request,
 //   res: Response

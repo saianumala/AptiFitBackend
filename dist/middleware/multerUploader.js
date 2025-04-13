@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.multerUploadMiddleware = multerUploadMiddleware;
+exports.multerUploadMiddleware = void 0;
 const multer_1 = __importDefault(require("multer"));
 const path_1 = __importDefault(require("path"));
 const storage = multer_1.default.diskStorage({
@@ -45,3 +45,4 @@ function multerUploadMiddleware(fieldName) {
         });
     };
 }
+exports.multerUploadMiddleware = multerUploadMiddleware;

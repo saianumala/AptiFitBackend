@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.generateUserContext = generateUserContext;
+exports.generateUserContext = void 0;
 const luxon_1 = require("luxon");
 const prisma_1 = __importDefault(require("../prisma"));
 function generateUserContext(_a) {
@@ -84,3 +84,4 @@ Current Time: ${luxon_1.DateTime.now().setZone(userData.timeZone)}
     `;
     });
 }
+exports.generateUserContext = generateUserContext;

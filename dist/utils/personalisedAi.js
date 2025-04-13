@@ -12,18 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.generateWithAI = generateWithAI;
-exports.personalisedAi = personalisedAi;
-exports.generateRecoveryActions = generateRecoveryActions;
-exports.calculateBodyMetrics = calculateBodyMetrics;
-exports.generateWorkoutAdvice = generateWorkoutAdvice;
-exports.generateHydrationAdvice = generateHydrationAdvice;
-exports.generateSleepAdvice = generateSleepAdvice;
-exports.generateMotivationAdvice = generateMotivationAdvice;
-exports.generateMealPlan = generateMealPlan;
-exports.generateDietAdvice = generateDietAdvice;
-exports.encodeImageToBase64 = encodeImageToBase64;
-exports.geminiChatbot = geminiChatbot;
+exports.geminiChatbot = exports.encodeImageToBase64 = exports.generateDietAdvice = exports.generateMealPlan = exports.generateMotivationAdvice = exports.generateSleepAdvice = exports.generateHydrationAdvice = exports.generateWorkoutAdvice = exports.calculateBodyMetrics = exports.generateRecoveryActions = exports.personalisedAi = exports.generateWithAI = void 0;
 require("dotenv/config");
 const prisma_1 = __importDefault(require("../prisma"));
 const genai_1 = require("@google/genai");
@@ -182,6 +171,7 @@ Calculate the percentage deviation from targets for each macro and calculate the
         return JSON.parse(cleanedText);
     });
 }
+exports.generateWithAI = generateWithAI;
 function personalisedAi(_a) {
     return __awaiter(this, arguments, void 0, function* ({ updatedUser, category, timeZone, }) {
         var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s;
@@ -557,6 +547,7 @@ The message should be friendly, motivational, and no longer than 2 sentences. Su
         }
     });
 }
+exports.personalisedAi = personalisedAi;
 function generateRecoveryActions(userId, contextType, contextData) {
     return __awaiter(this, void 0, void 0, function* () {
         const userData = yield getUserData(userId);
@@ -610,6 +601,7 @@ Return the result in structured JSON format:
         }
     });
 }
+exports.generateRecoveryActions = generateRecoveryActions;
 function getUserData(userId) {
     return __awaiter(this, void 0, void 0, function* () {
         const user = yield prisma_1.default.user.findUnique({
@@ -724,36 +716,43 @@ function calculateBodyMetrics({ gender, age, height, weight, activityLevel, wais
         return { error: `unable to calculate ${error.message}` };
     }
 }
+exports.calculateBodyMetrics = calculateBodyMetrics;
 function generateWorkoutAdvice(updatedUser) {
     return __awaiter(this, void 0, void 0, function* () {
         return yield personalisedAi({ updatedUser, category: "workout" });
     });
 }
+exports.generateWorkoutAdvice = generateWorkoutAdvice;
 function generateHydrationAdvice(updatedUser) {
     return __awaiter(this, void 0, void 0, function* () {
         return yield personalisedAi({ updatedUser, category: "hydration" });
     });
 }
+exports.generateHydrationAdvice = generateHydrationAdvice;
 function generateSleepAdvice(updatedUser) {
     return __awaiter(this, void 0, void 0, function* () {
         return yield personalisedAi({ updatedUser, category: "sleep" });
     });
 }
+exports.generateSleepAdvice = generateSleepAdvice;
 function generateMotivationAdvice(updatedUser) {
     return __awaiter(this, void 0, void 0, function* () {
         return yield personalisedAi({ updatedUser, category: "motivation" });
     });
 }
+exports.generateMotivationAdvice = generateMotivationAdvice;
 function generateMealPlan(updatedUser) {
     return __awaiter(this, void 0, void 0, function* () {
         return yield personalisedAi({ updatedUser, category: "meals" });
     });
 }
+exports.generateMealPlan = generateMealPlan;
 function generateDietAdvice(updatedUser) {
     return __awaiter(this, void 0, void 0, function* () {
         return yield personalisedAi({ updatedUser, category: "diet" });
     });
 }
+exports.generateDietAdvice = generateDietAdvice;
 function encodeImageToBase64(filePath) {
     return __awaiter(this, void 0, void 0, function* () {
         const imageBuffer = yield promises_1.default.readFile(filePath);
@@ -768,6 +767,7 @@ function encodeImageToBase64(filePath) {
         };
     });
 }
+exports.encodeImageToBase64 = encodeImageToBase64;
 function geminiChatbot(customPrompt) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -799,3 +799,4 @@ function geminiChatbot(customPrompt) {
         }
     });
 }
+exports.geminiChatbot = geminiChatbot;

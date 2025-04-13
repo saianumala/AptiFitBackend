@@ -42,10 +42,10 @@ const getUserNotifications = (req, res) => __awaiter(void 0, void 0, void 0, fun
 });
 exports.getUserNotifications = getUserNotifications;
 const markNotificationRead = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+    var _b;
     try {
         const { id } = req.params;
-        const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId;
+        const userId = (_b = req.user) === null || _b === void 0 ? void 0 : _b.userId;
         console.log("reached mark notification read");
         const notification = yield prisma_1.prisma.notification.update({
             where: {
@@ -80,9 +80,9 @@ const markNotificationRead = (req, res) => __awaiter(void 0, void 0, void 0, fun
 });
 exports.markNotificationRead = markNotificationRead;
 const markAllNotificationsRead = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+    var _c;
     try {
-        const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId;
+        const userId = (_c = req.user) === null || _c === void 0 ? void 0 : _c.userId;
         const { count } = yield prisma_1.prisma.notification.updateMany({
             where: {
                 userId,
@@ -105,10 +105,10 @@ const markAllNotificationsRead = (req, res) => __awaiter(void 0, void 0, void 0,
 });
 exports.markAllNotificationsRead = markAllNotificationsRead;
 const dismissNotification = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+    var _d;
     try {
         const { id } = req.params;
-        const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId;
+        const userId = (_d = req.user) === null || _d === void 0 ? void 0 : _d.userId;
         const notification = yield prisma_1.prisma.notification.delete({
             where: {
                 id,
