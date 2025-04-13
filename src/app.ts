@@ -3,7 +3,7 @@ import cors from "cors";
 import "dotenv/config";
 import apiRouter from "./routes/index";
 import cookieParser from "cookie-parser";
-import heapdump from "heapdump";
+// import heapdump from "heapdump";
 import "dotenv/config";
 import "./notifications/notificationJobs";
 import googleAuth from "./routes/googleAuthRouter";
@@ -20,16 +20,16 @@ app.use(cookieParser());
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-process.on("SIGUSR2", () => {
-  const snapshotName = `./heapdump-${Date.now()}.heapsnapshot`;
-  heapdump.writeSnapshot(snapshotName, (err, filename) => {
-    if (err) {
-      console.error("Error writing heap snapshot:", err);
-    } else {
-      console.log(`Heap snapshot written to ${filename}`);
-    }
-  });
-});
+// process.on("SIGUSR2", () => {
+//   const snapshotName = `./heapdump-${Date.now()}.heapsnapshot`;
+//   heapdump.writeSnapshot(snapshotName, (err, filename) => {
+//     if (err) {
+//       console.error("Error writing heap snapshot:", err);
+//     } else {
+//       console.log(`Heap snapshot written to ${filename}`);
+//     }
+//   });
+// });
 app.get("/", (req: Request, res: Response) => {
   res.status(200).send("/welcom to aptifit");
 });
