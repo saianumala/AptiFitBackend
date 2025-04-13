@@ -242,8 +242,9 @@ export async function login(req: Request, res: Response) {
     res
       .status(200)
       .cookie("accessToken", token, {
-        sameSite: "lax",
+        sameSite: "none",
         httpOnly: true,
+        secure: true,
         maxAge: 60 * 60 * 1000,
       })
       .json({
