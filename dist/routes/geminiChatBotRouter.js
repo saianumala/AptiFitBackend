@@ -1,0 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const userAuth_1 = require("../middleware/userAuth");
+const geminichatbotController_1 = require("../controllers/geminichatbotController");
+const router = (0, express_1.Router)();
+router.post("/createChat", userAuth_1.userAuthorization, geminichatbotController_1.createChatMessage);
+router.get("/getChat", userAuth_1.userAuthorization, geminichatbotController_1.getChatMessages);
+router.get("/:id", userAuth_1.userAuthorization, geminichatbotController_1.getChatMessageById);
+router.put("/:id", userAuth_1.userAuthorization, geminichatbotController_1.updateChatMessage);
+router.delete("/:id", userAuth_1.userAuthorization, geminichatbotController_1.deleteChatMessage);
+exports.default = router;

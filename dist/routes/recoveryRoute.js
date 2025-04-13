@@ -1,0 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const recoveryController_1 = require("../controllers/recoveryController");
+const userAuth_1 = require("../middleware/userAuth");
+const router = (0, express_1.Router)();
+router.get("/actions", userAuth_1.userAuthorization, recoveryController_1.getPendingRecoveryActions);
+router.patch("/actions/:id", userAuth_1.userAuthorization, recoveryController_1.updateRecoveryActionStatus);
+router.get("/adaptive-plans", userAuth_1.userAuthorization, recoveryController_1.getRecoveryPlans);
+exports.default = router;

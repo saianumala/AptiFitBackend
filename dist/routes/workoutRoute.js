@@ -1,0 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const workoutController_1 = require("../controllers/workoutController");
+const userAuth_1 = require("../middleware/userAuth");
+const router = (0, express_1.Router)();
+router.post("/generate", userAuth_1.userAuthorization, workoutController_1.generateWorkoutPlan);
+router.post("/log", userAuth_1.userAuthorization, workoutController_1.logWorkoutCompletion);
+router.get("/history", userAuth_1.userAuthorization, workoutController_1.getWorkoutHistory);
+router.get("/recovery/:logId", userAuth_1.userAuthorization, workoutController_1.getWorkoutRecovery);
+exports.default = router;
