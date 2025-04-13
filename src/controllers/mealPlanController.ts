@@ -1,10 +1,7 @@
 import { Request, Response } from "express";
 import prisma from "../prisma";
 import { generateWithAI } from "../utils/personalisedAi";
-import type { Prisma } from "@prisma/client";
-import fs from "fs/promises";
-import path from "path";
-import { z } from "zod";
+import { Prisma } from "@prisma/client";
 import { sendNotification } from "web-push";
 import { sendNotifications } from "../notifications/sendNotification";
 import { getUserLocalDate } from "../utils/getLocalTime";
